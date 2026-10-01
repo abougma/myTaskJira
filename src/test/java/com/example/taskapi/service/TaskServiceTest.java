@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -115,5 +116,21 @@ class TaskServiceTest {
         assertEquals("Apprendre les update by id", result.getTitle());
 
         verify(taskRepository).save(existingTask);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTaskNotFound(){
+        Long id = 99L;
+
+        when(taskRepository.findById(id)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> taskService.getTaskById(id)
+        );
+
+        assertEquals("Task not found", exception.getMessage());
+
+        verify(taskRepository).findById(id);
     }
 }
