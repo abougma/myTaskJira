@@ -83,4 +83,37 @@ class TaskServiceTest {
         verify(taskRepository).findAll();
 
     }
+
+    @Test
+    void shouldDeleteTask(){
+        Long id = 1L;
+        Task task = new Task();
+
+        when(taskRepository.findById(id)).thenReturn(Optional.of(task));
+
+        Task result = taskService.deleteTask(id);
+
+        assertEquals(task, result);
+
+        verify(taskRepository).deleteById(id);
+
+    }
+
+    @Test
+    void shouldUpdateTask(){
+        Long id = 1L;
+        Task existingTask = new Task();
+        existingTask.setTitle("Apprendre les get by id");
+
+        Task updatedTask = new Task();
+        updatedTask.setTitle("Apprendre les update by id");
+
+        when(taskRepository.findById(id)).thenReturn(Optional.of(existingTask));
+
+        Task result = taskService.updateTask(id, updatedTask);
+
+        assertEquals("Apprendre les update by id", result.getTitle());
+
+        verify(taskRepository).save(existingTask);
+    }
 }
